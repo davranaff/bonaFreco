@@ -1,0 +1,33 @@
+<section class="section my-2 is-mobile">
+    <div class="box">
+        <h4 class="title has-text-black-ter has-text-centered has-text-weight-bold">Categories</h4>
+        <div class="columns is-multiline is-mobile is-justify-content-center">
+            {% for item in category %}
+                <div class="column is-3 has-text-centered">
+                    <div class="dropdown is-hoverable">
+                        <div class="dropdown-trigger">
+                            <button class="button is-success is-outlined" aria-haspopup="true"
+                                    aria-controls="dropdown-menu4">
+                                <span>{{ item.name }} | {{ item.subcategory_set.count }}</span>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu" id="dropdown-menu4" role="menu" style="width: 300px">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    {% for foo in item.subcategory_set.all %}
+                                        <p>
+                                            <a href="{% url 'bonaapp:subcategory_detail' foo.pk %}"
+                                               class="has-text-link">
+                                                {{ foo.name }} | {{ foo.product_set.count }}
+                                            </a>
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+    <div class="container box">
+        {% if messages %}
+            <div class="box is-centered has-background-success">
+                {% for message in messages %}
+                    <p class="title has-text-light has-text-centered">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h2 class="subtitle has-text-centered">Your History Order</h2>
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <td><b>address</b></td>
+                    <td><b>date</b></td>
+                    <td><b>products</b></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order %}
+                    <tr>
+                    <td><b>{{ item.address }}</b></td>
+                    <td><b>{{ item.date|date:"d.m.Y | H:i:s" }}</b></td>
+                    <td>
+                        <p><b>Product Name: </b>
+                        {% for a in item.order_product.all %}
+                            {{ a.product.name }}
+                        {% endfor %}
+                        </p>
+                    </td>
+                    <td><a href="{% url 'bonaapp:return_order_url' item.pk %}" class="button is-info is-light">Buy</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock content %}

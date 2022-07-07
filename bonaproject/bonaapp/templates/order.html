@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            {% if messages %}
+                <div class="box is-centered has-background-danger">
+                    {% for message in messages %}
+                        <p class="title has-text-light has-text-centered">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="columns is-justify-content-space-between">
+                <div class="column is-4 box p-6">
+                    <p class="subtitle has-text-centered">fill in the fields to place an order</p>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for foo in form %}
+                            <p class="my-2">
+                                <label for="">{{ foo.label }}</label>
+                                {{ foo }}
+                            </p>
+                        {% endfor %}
+
+                        <button class="button is-info">Checkout</button>
+                    </form>
+                </div>
+                <div class="column is-7 box is-centered ">
+                    <p class="subtitle is-size-3 has-text-centered is-vcentered">Basket <a
+                            href="{% url 'bonaapp:cart_url' %}" class="button is-warning">Edit</a></p>
+                    <table class="table is-fullwidth">
+                        <thead>
+                        <tr>
+                            <td>product</td>
+                            <td>price</td>
+                            <td>quantity</td>
+                            <td>total price</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in basket %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.product.price }} AED</td>
+                                <td>
+                                    {% if item.product.is_drink %}
+                                        {{ item.quantity }} pcs
+                                    {% else %}
+                                        {{ item.quantity }} kg
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.total_price }} AED</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <p class="subtitle has-text-centered is-size-5">
+                        <span class="has-text-info has-text-weight-bold">total price: <span
+                                class="has-text-black">{{ total }}</span> AED</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container box">
+            {% if messages %}
+                <div class="box is-centered has-background-success">
+                    {% for message in messages %}
+                        <p class="title has-text-light has-text-centered">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <h2 class="subtitle has-text-centered">Your History Order</h2>
+            <table class="table is-fullwidth">
+                <thead>
+                <tr>
+                    <td><b>address</b></td>
+                    <td><b>date</b></td>
+                    <td><b>more detailed</b></td>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in order %}
+                    <tr>
+                        <td><b>{{ item.address }}</b></td>
+                        <td><b>{{ item.date|date:"d.m.Y | H:i:s" }}</b></td>
+                        <td>
+                            <p><b>Product Name: </b>
+                                {% for a in item.order_product.all %}
+                                    {{ a.product.name }}
+                                {% endfor %}
+                            </p>
+                        </td>
+                        <td>
+                            <a href="{% url 'bonaapp:return_order_url' item.pk %}" class="button is-success">Buy</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <h1 class="title has-text-danger-dark has-text-centered">Empty</h1>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock content %}

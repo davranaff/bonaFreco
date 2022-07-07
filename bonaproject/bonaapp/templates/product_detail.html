@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="columns is-justify-content-space-between">
+            <div class="column is-6 box">
+                <figure class="image">
+                    <img src="{{ product.image.url }}" alt="">
+                </figure>
+            </div>
+            <div class="column is-5 box">
+                <p class="subtitle has-text-centered is-size-3">{{ product.name }}</p>
+                <hr>
+                <div class="content py-2">
+                    {{ product.description }}
+                </div>
+                <p class="subtitle">country: {{ product.country }}</p>
+                <p class="subtitle">price: {{ product.price }} AED</p>
+                <div class="buttons">
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'bonaapp:add_to_cart_url' product.pk %}" method="GET" style="display: flex"
+                              class="counter is-vcentered">
+                            {% if product.is_drink %}
+                                <a class="counter__btn button is-small is-warning my-1"
+                                   style="width: 10px;height: 100%" data-direction="minus-drink">-</a>
+                                <a class="counter__btn button is-small is-info my-1"
+                                   style="width: 10px;height: 100%" data-direction="plus-drink">+</a>
+                            {% else %}
+                                <a class="counter__btn button is-small is-warning my-1"
+                                   style="width: 10px;height: 100%" data-direction="minus">-</a>
+                                <a class="counter__btn button is-small is-info my-1"
+                                   style="width: 10px;height: 100%" data-direction="plus">+</a>
+                            {% endif %}
+                            <input type="text" value="0" class="counter__value input is-size-7" name="kol"
+                                   style="width: 70px;height: 40px">
+                            <input type="submit" class="button is-success" value="buy">
+                        </form>
+                    {% else %}
+                        <p class="title is-size-5 has-text-danger">To buy a product, please register first.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

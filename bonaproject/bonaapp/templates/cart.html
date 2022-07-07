@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% if messages %}
+            <div class="box is-centered has-background-success-light">
+                {% for message in messages %}
+                    <p class="title has-text-danger has-text-centered">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="box">
+            <h1 class="title has-text-danger has-text-weight-bold has-text-centered">You cart</h1>
+            <div class="content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td  style="font-size: 25px; font-weight: 900">product</td>
+                            <td  style="font-size: 25px; font-weight: 900">quantity</td>
+                            <td  style="font-size: 25px; font-weight: 900">total price</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td style="font-size: 25px; font-weight: 600"><a href="{% url 'bonaapp:product_detail_url' item.product.pk %}">{{ item.product.name }}</a></td>
+                            <td style="display: flex;font-size: 25px; font-weight: 600;align-items: center" >
+                                <form action="{% url 'bonaapp:add_to_cart_url' item.product.pk %}" method="GET" style="display: flex" class="counter is-vcentered">
+                                    {% if item.product.is_drink %}
+                                            <a class="counter__btn button is-small is-warning my-1"
+                                               style="width: 10px;height: 100%" data-direction="minus-drink">-</a>
+                                            <a class="counter__btn button is-small is-info my-1"
+                                               style="width: 10px;height: 100%" data-direction="plus-drink">+</a>
+                                        {% else %}
+                                            <a class="counter__btn button is-small is-warning my-1"
+                                               style="width: 10px;height: 100%" data-direction="minus">-</a>
+                                            <a class="counter__btn button is-small is-info my-1"
+                                               style="width: 10px;height: 100%" data-direction="plus">+</a>
+                                        {% endif %}
+                                    <input type="text" value="{{ item.quantity }}" class="counter__value input is-size-7" name="kol" style="width: 100px;height: 40px">
+                                    <input type="submit" class="button is-success is-light" value="change" >
+                                </form>
+                                {% if item.product.is_drink %}
+                                    <span class="is-size-6">pcs</span>
+                                {% else %}
+                                    <span class="is-size-6">kg</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 25px; font-weight: 600">{{ item.total_price }} AED</td>
+                            <td>
+                                <figure class="image is-vcentered" style="width: 35px ;">
+                                    <a href="{% url 'bonaapp:delete_cart_item' %}?basket_pk={{item.pk}}"><img src="{% static 'icons/trash.png' %}" alt=""></a>
+                                </figure>
+                            </td>
+                            <td>
+                                <a class="js-modal-trigger button" style="background-color: rgba(255,245,0,0.45)" data-target="modal-js-example">Buy later</a>
+                            </td>
+                        </tr>
+                        <div class="modal" id="modal-js-example">
+                          <div class="modal-background"></div>
+                          <div class="modal-card">
+                            <header class="modal-card-head">
+                              <p class="modal-card-title">Modal title</p>
+                              <button class="delete" aria-label="close"></button>
+                            </header>
+                            <section class="modal-card-body">
+                                <form action="{% url 'bonaapp:buy_later_url' item.pk %}" id="later" method="GET">
+                                    <input type="date" class="input" min="{{ date_now|date:'Y-m-d' }}" name="date">
+                                </form>
+                            </section>
+                            <footer class="modal-card-foot">
+                              <button class="button is-success" form="later">Ok</button>
+                              <button class="button" name="text">Cancel</button>
+                            </footer>
+                          </div>
+                        </div>
+                    {% empty %}
+                        <h1 class="title has-text-danger-dark has-text-centered">Empty</h1>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div  class="buttons is-centered">
+                    <a href="{% url 'bonaapp:home_page' %}" class="button is-warning">Go to home page</a>
+                    {% if cart and quantity %}
+                    <a href="{% url 'bonaapp:create_order_url' %}" class="button is-primary">Checkout</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section class="section">
+    <div class="container">
+        <div class="box">
+            <h1 class="title has-text-danger has-text-weight-bold has-text-centered">Buy Later</h1>
+            <div class="content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td  style="font-size: 25px; font-weight: 900">product</td>
+                            <td  style="font-size: 25px; font-weight: 900">quantity</td>
+                            <td  style="font-size: 25px; font-weight: 900">total price</td>
+                            <td style="font-size: 25px; font-weight: 900">Buy Date</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in cart_later %}
+                        <tr>
+                            <td style="font-size: 25px; font-weight: 600">{{ item.product.name }}</td>
+                            <td style="display: flex;font-size: 25px; font-weight: 600;align-items: center" >
+                                {% if item.product.is_drink %}
+                                    {{ item.quantity }} pcs
+                                {% else %}
+                                    {{ item.quantity }} kg
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 25px; font-weight: 600">
+                                {{ item.total_price }} AED
+                            </td>
+                            <td style="font-size: 25px; font-weight: 600">
+                                {{ item.date|date:'d-m-Y' }}
+                            </td>
+                            <td>
+                                <figure class="image is-vcentered" style="width: 35px ;">
+                                    <a href="{% url 'bonaapp:delete_cart_item' %}?buylater_pk={{item.pk}}"><img src="{% static 'icons/trash.png' %}" alt=""></a>
+                                </figure>
+                            </td>
+                            <td>
+                                <a href="{% url 'bonaapp:buy_now_url' item.pk %}" class="button" style="background-color: rgba(255,245,0,0.45)" >Buy Now</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <h1 class="title has-text-danger-dark has-text-centered">Empty</h1>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

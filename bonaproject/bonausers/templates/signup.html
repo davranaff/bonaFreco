@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if messages %}
+        <div class="container has-background-danger p-5">
+            {% for message in messages %}
+                <p class="title has-text-weight-bold has-text-centered">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="container mt-6">
+        <div class="columns is-centered">
+            <div class="card column p-5 is-5 ">
+                <div class="card-header">
+                    <div class="card-header-title is-centered">
+                        Sign Up
+                    </div>
+                </div>
+                <div class="card-content">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {% for item in form %}
+                            <p>
+                                {{ item.help_text }}
+                                <br>
+                                {{ item }}
+                                <br>
+                            </p>
+
+                        {% endfor %}
+                        <div class="buttons is-centered mt-5">
+                            <button class="button is-info">Sign Up</button>
+                            <a href="{% url 'bonausers:login' %}" class="button is-warning">Log in-></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
